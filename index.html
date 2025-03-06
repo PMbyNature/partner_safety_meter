@@ -3,43 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partner Complaint Free Days</title>
+    <title>Partner Complaint Free Days Counter</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; margin: 50px; }
-        .counter-container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); display: inline-block; padding: 30px; }
-        .title { font-size: 36px; font-weight: bold; }
-        .counter { font-size: 80px; font-weight: bold; color: red; margin: 20px 0; }
-        .reset-btn { background: red; color: white; padding: 10px 20px; font-size: 20px; border: none; border-radius: 5px; cursor: pointer; }
-        .reset-btn:hover { background: darkred; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 50px;
+        }
+        .counter-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            padding: 30px;
+        }
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .counter {
+            font-size: 80px;
+            font-weight: bold;
+            color: red;
+            margin: 20px 0;
+        }
+        .reset-btn {
+            background: red;
+            color: white;
+            padding: 10px 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .reset-btn:hover {
+            background: darkred;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .modal-buttons {
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .yes-btn {
+            background: red;
+            color: white;
+        }
+        .no-btn {
+            background: green;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="counter-container">
         <div class="title">PARTNER COMPLAINT FREE DAYS</div>
         <div id="counter" class="counter">0</div>
+        <button class="reset-btn" onclick="openModal()">Report Complaint</button>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <p>Are you sure a Partner has complained to Drew?</p>
+            <div class="modal-buttons">
+                <button class="yes-btn" onclick="confirmReset()">Yes</button>
+                <button class="no-btn" onclick="closeModal()">No</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        const startDate = new Date("2025-03-03T00:00:00"); 
+        const startDate = new Date("2025-03-03T00:00:00"); // March 3, 2025
         const localStorageKey = "complaintFreeDays";
+        const lastResetKey = "lastResetDate"; 
 
         function calculateDaysSinceStart() {
             const now = new Date();
-            return Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            const lastReset = localStorage.getItem(lastResetKey);
+            
+            if (lastReset) {
+                const lastResetDate = new Date(lastReset);
+                const diff = Math.floor((now - lastResetDate) / (1000 * 60 * 60 * 24));
+                return diff;
+            } else {
+                // If no reset, calculate from original start date
+                return Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            }
         }
 
         function updateCounter() {
             let daysWithoutComplaint = localStorage.getItem(localStorageKey);
+
             if (daysWithoutComplaint === null) {
                 daysWithoutComplaint = calculateDaysSinceStart();
                 localStorage.setItem(localStorageKey, daysWithoutComplaint);
             } else {
                 daysWithoutComplaint = parseInt(daysWithoutComplaint);
             }
+
             document.getElementById("counter").innerText = daysWithoutComplaint;
         }
 
+        function openModal() {
+            document.getElementById("modal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+
+        function confirmReset() {
+            localStorage.setItem(localStorageKey, "0");
+            localStorage.setItem(lastResetKey, new Date().toISOString()); // Store reset date
+            document.getElementById("counter").innerText = "0";
+            alert("Partner complaint reported! Counter reset.");
+            closeModal();
+        }
+
+        // Update counter on page load
         updateCounter();
+
+        // Automatically update at midnight
+        setInterval(() => {
+            let storedDays = parseInt(localStorage.getItem(localStorageKey)) || 0;
+            storedDays++;
+            localStorage.setItem(localStorageKey, storedDays);
+            updateCounter();
+        }, 1000 * 60 * 60 * 24);
     </script>
 </body>
 </html>
