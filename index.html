@@ -11,12 +11,64 @@
         .counter { font-size: 80px; font-weight: bold; color: red; margin: 20px 0; }
         .reset-btn { background: red; color: white; padding: 10px 20px; font-size: 20px; border: none; border-radius: 5px; cursor: pointer; }
         .reset-btn:hover { background: darkred; }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .modal-buttons {
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .yes-btn {
+            background: red;
+            color: white;
+        }
+        .no-btn {
+            background: green;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="counter-container">
         <div class="title">PARTNER COMPLAINT FREE DAYS</div>
         <div id="counter" class="counter">0</div>
+        <button class="reset-btn" onclick="openModal()">Report Complaint</button>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <p>Are you sure a Partner has complained to Drew?</p>
+            <div class="modal-buttons">
+                <button class="yes-btn" onclick="confirmReset()">Yes</button>
+                <button class="no-btn" onclick="closeModal()">No</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -45,6 +97,22 @@
             document.getElementById("counter").innerText = storedDays;
         }
 
+        function openModal() {
+            document.getElementById("modal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+
+        function confirmReset() {
+            localStorage.setItem(localStorageKey, "0");
+            localStorage.setItem(lastUpdatedKey, new Date().toISOString()); // Store reset date
+            document.getElementById("counter").innerText = "0";
+            alert("Partner complaint reported! Counter reset.");
+            closeModal();
+        }
+
         // Run the counter update on load
         updateCounter();
 
@@ -65,3 +133,4 @@
     </script>
 </body>
 </html>
+
