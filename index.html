@@ -5,16 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partner Complaint Free Days</title>
     <style>
-        /* Background Styling */
+        /* Animated Background */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: url('https://your-logo-url.com/jobtarget-logo.png') repeat;
-            background-size: 150px 150px; /* Adjust the size of the repeated logos */
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #fbc2eb, #8ec5fc, #e0c3fc);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
             margin: 50px;
         }
+        
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .counter-container {
-            background: rgba(255, 255, 255, 0.85); /* Slightly transparent white for readability */
+            background: rgba(255, 255, 255, 0.85); /* Slight transparency */
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
