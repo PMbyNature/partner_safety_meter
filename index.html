@@ -123,25 +123,21 @@
 
         function updateCounter() {
             let lastReset = localStorage.getItem(lastUpdatedKey);
-            let storedDays = parseInt(localStorage.getItem(localStorageKey)) || 0;
+            let storedDays = localStorage.getItem(localStorageKey);
 
             const now = new Date();
             const today = now.toISOString().split("T")[0]; // YYYY-MM-DD format
 
             if (!lastReset) {
-                // If no reset has ever happened, calculate from the start date
+                // No reset has ever happened, count from start date
                 storedDays = calculateDaysSince(startDate);
                 localStorage.setItem(localStorageKey, storedDays);
                 localStorage.setItem(lastUpdatedKey, today);
             } else {
-                // Otherwise, calculate from the last reset date
+                // If reset happened, count from that reset date
                 const lastResetDate = new Date(lastReset);
-                let correctDays = calculateDaysSince(lastResetDate);
-
-                if (correctDays !== storedDays) {
-                    storedDays = correctDays;
-                    localStorage.setItem(localStorageKey, storedDays);
-                }
+                storedDays = calculateDaysSince(lastResetDate);
+                localStorage.setItem(localStorageKey, storedDays);
             }
 
             document.getElementById("counter").innerText = storedDays;
