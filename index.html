@@ -116,22 +116,23 @@
         const localStorageKey = "complaintFreeDays";
         const lastUpdatedKey = "lastUpdatedDate";
 
-        function calculateDaysSinceStart() {
+        function calculateDaysSince(date) {
             const now = new Date();
-            return Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            return Math.floor((now - date) / (1000 * 60 * 60 * 24));
         }
 
         function updateCounter() {
-            let storedDays = parseInt(localStorage.getItem(localStorageKey)) || calculateDaysSinceStart();
+            let storedDays = parseInt(localStorage.getItem(localStorageKey)) || calculateDaysSince(startDate);
             let lastUpdated = localStorage.getItem(lastUpdatedKey);
 
             const now = new Date();
             const today = now.toISOString().split("T")[0]; // YYYY-MM-DD
 
             if (!lastUpdated || lastUpdated !== today) {
-                const lastUpdatedDate = lastUpdated ? new Date(lastUpdated) : startDate;
-                const missedDays = Math.floor((now - lastUpdatedDate) / (1000 * 60 * 60 * 24));
-                storedDays += missedDays;
+                let lastUpdatedDate = lastUpdated ? new Date(lastUpdated) : startDate;
+                let missedDays = calculateDaysSince(lastUpdatedDate);
+                
+                storedDays += missedDays; // Add all the missed days
 
                 localStorage.setItem(localStorageKey, storedDays);
                 localStorage.setItem(lastUpdatedKey, today);
@@ -159,7 +160,7 @@
         // Run the counter update on load
         updateCounter();
 
-        // Ensure midnight updates keep happening
+        // Schedule an update at midnight
         function scheduleMidnightUpdate() {
             const now = new Date();
             const midnight = new Date();
