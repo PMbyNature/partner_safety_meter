@@ -22,7 +22,7 @@
         }
 
         .counter-container {
-            background: rgba(255, 255, 255, 0.85); /* Slight transparency */
+            background: rgba(255, 255, 255, 0.85);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -122,20 +122,26 @@
         }
 
         function updateCounter() {
-            let storedDays = parseInt(localStorage.getItem(localStorageKey)) || calculateDaysSince(startDate);
-            let lastUpdated = localStorage.getItem(lastUpdatedKey);
+            let lastReset = localStorage.getItem(lastUpdatedKey);
+            let storedDays = parseInt(localStorage.getItem(localStorageKey)) || 0;
 
             const now = new Date();
-            const today = now.toISOString().split("T")[0]; // YYYY-MM-DD
+            const today = now.toISOString().split("T")[0]; // YYYY-MM-DD format
 
-            if (!lastUpdated || lastUpdated !== today) {
-                let lastUpdatedDate = lastUpdated ? new Date(lastUpdated) : startDate;
-                let missedDays = calculateDaysSince(lastUpdatedDate);
-                
-                storedDays += missedDays; // Add all the missed days
-
+            if (!lastReset) {
+                // If no reset has ever happened, calculate from the start date
+                storedDays = calculateDaysSince(startDate);
                 localStorage.setItem(localStorageKey, storedDays);
                 localStorage.setItem(lastUpdatedKey, today);
+            } else {
+                // Otherwise, calculate from the last reset date
+                const lastResetDate = new Date(lastReset);
+                let correctDays = calculateDaysSince(lastResetDate);
+
+                if (correctDays !== storedDays) {
+                    storedDays = correctDays;
+                    localStorage.setItem(localStorageKey, storedDays);
+                }
             }
 
             document.getElementById("counter").innerText = storedDays;
@@ -160,7 +166,7 @@
         // Run the counter update on load
         updateCounter();
 
-        // Schedule an update at midnight
+        // Ensure midnight updates keep happening
         function scheduleMidnightUpdate() {
             const now = new Date();
             const midnight = new Date();
