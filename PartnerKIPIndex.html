@@ -17,14 +17,26 @@
         canvas {
             max-width: 100%;
         }
+        #uploadSection {
+            display: block !important;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            border: 1px solid black;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Partner KPI Dashboard</h1>
-        <div style="margin-top: 20px;">
-            <input type="file" id="csvFileInput" accept=".csv">
-            <button onclick="processCSV()">Upload CSV</button>
+        <div id="uploadSection">
+            <label for="csvFileInput">Upload a CSV File:</label>
+            <input type="file" id="csvFileInput" accept=".csv" style="display: block;">
+            <button id="uploadButton" onclick="processCSV()" style="display: block; padding: 10px; background: blue; color: white; border: none; cursor: pointer; margin-top: 10px;">
+                Upload CSV
+            </button>
         </div>
         
         <h2>New Partners Launched in 2025</h2>
@@ -41,7 +53,34 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("DOM Loaded: Checking for upload button and file input...");
+            
+            const uploadSection = document.getElementById("uploadSection");
+            const fileInput = document.getElementById("csvFileInput");
+            const uploadButton = document.getElementById("uploadButton");
+            
+            if (!uploadSection) {
+                console.error("#uploadSection is missing!");
+            } else {
+                console.log("#uploadSection exists!");
+            }
+            
+            if (!fileInput) {
+                console.error("File input is missing!");
+            } else {
+                console.log("File input exists!");
+            }
+            
+            if (!uploadButton) {
+                console.error("Upload button is missing!");
+            } else {
+                console.log("Upload button exists!");
+            }
+        });
+        
         function processCSV() {
+            console.log("Upload button clicked.");
             const fileInput = document.getElementById('csvFileInput');
             const file = fileInput.files[0];
             if (!file) {
@@ -60,7 +99,7 @@
         function parseCSV(csvText) {
             const rows = csvText.split('\n');
             const data = rows.map(row => row.split(','));
-            console.log(data); // Process data as needed
+            console.log("CSV Data:", data); // Process data as needed
             
             // Example: Set new partners count (assuming first value is it)
             document.getElementById('newPartners').textContent = data[1][0] || 'No data';
@@ -108,7 +147,7 @@
                         backgroundColor: 'gray'
                     }, {
                         label: 'This Month',
-                        data: [100, 110, 120], // Replace with actual data
+                        data: [100, 110, 120], // Replace with actual data 
                         backgroundColor: 'green'
                     }]
                 }
