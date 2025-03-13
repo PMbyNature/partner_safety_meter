@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner KPI Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        #uploadSection {
+            display: block !important;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            border: 1px solid black;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Partner KPI Dashboard</h1>
+        <div id="uploadSection">
+            <label for="csvFileInput">Upload a CSV File:</label>
+            <input type="file" id="csvFileInput" accept=".csv" style="display: block;">
+            <button id="uploadButton" onclick="processCSV()" style="display: block; padding: 10px; background: blue; color: white; border: none; cursor: pointer; margin-top: 10px;">
+                Upload CSV
+            </button>
+        </div>
+        
+        <h2>New Partners Launched in 2025</h2>
+        <p id="newPartners"></p>
+
+        <h2>Partners Gross Revenue YTD vs 2024 YTD</h2>
+        <canvas id="revenueChart"></canvas>
+
+        <h2>New Companies with Contacts by Channel YTD vs 2024</h2>
+        <canvas id="companiesYTDChart"></canvas>
+
+        <h2>New Companies with Contacts by Channel Monthly vs Last Month</h2>
+        <canvas id="companiesMonthlyChart"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("DOM Loaded: Checking for upload button and file input...");
+            
+            const uploadSection = document.getElementById("uploadSection");
+            const fileInput = document.getElementById("csvFileInput");
+            const uploadButton = document.getElementById("uploadButton");
+            
+            if (!uploadSection) {
+                console.error("#uploadSection is missing!");
+            } else {
+                console.log("#uploadSection exists!");
+            }
+            
+            if (!fileInput) {
+                console.error("File input is missing!");
+            } else {
+                console.log("File input exists!");
+            }
+            
+            if (!uploadButton) {
+                console.error("Upload button is missing!");
+            } else {
+                console.log("Upload button exists!");
+            }
+        });
+        
+        function processCSV() {
+            console.log("Upload button clicked.");
+            const fileInput = document.getElementById('csvFileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please upload a CSV file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                parseCSV(text);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(csvText) {
+            const rows = csvText.split('\n');
+            const data = rows.map(row => row.split(','));
+            console.log("CSV Data:", data); // Process data as needed
+            
+            // Example: Set new partners count (assuming first value is it)
+            document.getElementById('newPartners').textContent = data[1][0] || 'No data';
+            
+            // Placeholder for updating charts
+            updateCharts();
+        }
+
+        function updateCharts() {
+            new Chart(document.getElementById('revenueChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['2024 YTD', '2025 YTD'],
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: [500000, 600000], // Replace with actual data
+                        backgroundColor: ['blue', 'green']
+                    }]
+                }
+            });
+
+            new Chart(document.getElementById('companiesYTDChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Channel A', 'Channel B', 'Channel C'],
+                    datasets: [{
+                        label: '2024 YTD',
+                        data: [200, 150, 100], // Replace with actual data
+                        backgroundColor: 'blue'
+                    }, {
+                        label: '2025 YTD',
+                        data: [220, 180, 130], // Replace with actual data
+                        backgroundColor: 'green'
+                    }]
+                }
+            });
+
+            new Chart(document.getElementById('companiesMonthlyChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Channel A', 'Channel B', 'Channel C'],
+                    datasets: [{
+                        label: 'Last Month',
+                        data: [80, 90, 100], // Replace with actual data
+                        backgroundColor: 'gray'
+                    }, {
+                        label: 'This Month',
+                        data: [100, 110, 120], // Replace with actual data 
+                        backgroundColor: 'green'
+                    }]
+                }
+            });
+        }
+    </script>
+</body>
+</html>
